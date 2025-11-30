@@ -16,7 +16,7 @@ class PCA:
         
         
     def load_image(self, filepath):
-        self.img_original = cv2.imread("OpSens_Polarabstandsprojektion/"+filepath)
+        self.img_original = cv2.imread(filepath)
     
     def img_to_gray(self):
         self.img_gray = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2GRAY)
@@ -53,14 +53,3 @@ class PCA:
         plt.axis("off")
         plt.title("Objektorientierung (PCA)")
         plt.show()
-        
-        
-        
-if __name__ == "__main__":
-    pca = PCA()
-    pca.load_image("Ei2.png")
-    pca.img_to_gray()
-    pca.img_to_binary()
-    pca.find_largest_contour()
-    pca.principal_component_analysis()
-    pca.visualize()
