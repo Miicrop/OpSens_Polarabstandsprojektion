@@ -2,27 +2,16 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-class PCA:
+from Verfahren.Preprocessing import Preprocessing
+
+class PCA(Preprocessing):
     def __init__(self):
-        self.img_original = None
-        self.img_gray = None
-        self.img_binary = None
-        self.img_distance = None
+        super().__init__()
         self.contour = None
         self.major_axis = None
         self.object_center = None
         self.orientation_deg = None
         self.mean = None
-        
-        
-    def load_image(self, filepath):
-        self.img_original = cv2.imread(filepath)
-    
-    def img_to_gray(self):
-        self.img_gray = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2GRAY)
-        
-    def img_to_binary(self):
-        _, self.img_binary = cv2.threshold(self.img_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         
     def find_largest_contour(self):
         contours, _ = cv2.findContours(self.img_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -38,7 +27,6 @@ class PCA:
 
         self.major_axis = e_vecs[:, np.argmax(e_vals)]
      
-        
     def visualize(self):
         cx, cy = self.object_center
         cv2.circle(self.img_original, (cx, cy), 12, (0, 0, 255), -1)
@@ -53,3 +41,10 @@ class PCA:
         plt.axis("off")
         plt.title("Objektorientierung (PCA)")
         plt.show()
+        
+    
+    def run(self, filepath):
+        self.preprocess(filepath)
+        self.find_largest_contour()
+        self.principal_component_analysis()
+        self.visualize()

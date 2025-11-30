@@ -5,11 +5,11 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.gridspec import GridSpec
 from matplotlib.widgets import Button
 
-class PolarDistanceProjection:
+from Verfahren.Preprocessing import Preprocessing
+
+class PolarDistanceProjection(Preprocessing):
     def __init__(self):
-        self.img_original = None
-        self.img_gray = None
-        self.img_binary = None
+        super().__init__()
         self.img_distance = None
         self.object_center = None
         self.thetas = None
@@ -17,24 +17,16 @@ class PolarDistanceProjection:
         self.dominant_frequency = None
         self.phase = None
         self.orientation_deg = None
-
-    def load_image(self, filepath):
-        self.img_original = cv2.imread(filepath)
-    
-    def img_to_gray(self):
-        self.img_gray = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2GRAY)
-        
-    def img_to_binary(self, threshold=166):
-        # ToDo: Otsu as parameter, if images are more complex
-        _, self.img_binary = cv2.threshold(self.img_gray, threshold, 255, cv2.THRESH_BINARY)
-        self.img_binary = (self.img_binary > 0).astype(np.uint8)
+ 
         
     def calculate_distance_transform(self):
         self.img_distance = cv2.distanceTransform(self.img_binary, cv2.DIST_L2, 5)
+ 
         
     def find_center(self):
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(self.img_distance)
         self.object_center = np.array([int(max_loc[0]), int(max_loc[1])], dtype=np.int32)
+  
         
     def polar_projection(self, n_angles=360, max_radius=2000):
         h, w = self.img_binary.shape
@@ -56,9 +48,11 @@ class PolarDistanceProjection:
                 if self.img_binary[y, x] == 0:
                     self.radii[i] = r
                     break
+ 
                 
     def smooth_radii(self, kernel_size=7):
         self.radii = np.convolve(self.radii, np.ones(kernel_size)/kernel_size, mode='same')
+  
         
     def analyze_frequencies(self, methdod='fft'):
         if methdod == "peak":
@@ -80,10 +74,10 @@ class PolarDistanceProjection:
         self.phase = np.angle(F[self.dominant_frequency])
         orientation = -self.phase / self.dominant_frequency
         self.orientation_deg = np.rad2deg(orientation) % 360
+  
         
     def print_results(self):
         print(f"Dominante Frequenz k = {self.dominant_frequency}")
-        # print(f"Phase = {self.phase:.3f} rad")
         print(f"Geschätzte Orientierung = {self.orientation_deg:.2f}°")
         
         
@@ -155,6 +149,7 @@ class PolarDistanceProjection:
         ax7.grid()
 
         plt.show()
+   
         
     def animate_live(self, interval=1):
 
@@ -250,3 +245,15 @@ class PolarDistanceProjection:
         btn_reset.on_clicked(restart)
 
         plt.show()
+    
+        
+    def run(self, img_path):
+        self.preprocess(img_path)
+        self.calculate_distance_transform()
+        self.find_center()
+        self.polar_projection()
+        self.smooth_radii()
+        self.analyze_frequencies("peak")
+        self.print_results()
+        self.visualize()
+        self.animate_live()
