@@ -54,7 +54,7 @@ class PolarDistanceProjection(Preprocessing):
         self.radii = np.convolve(self.radii, np.ones(kernel_size)/kernel_size, mode='same')
   
         
-    def analyze_frequencies(self, methdod='fft'):
+    def analyze_frequencies(self, methdod="fft"):
         if methdod == "peak":
             idx = np.argmax(self.radii)
             angle = np.rad2deg(self.thetas[idx]) % 360
@@ -113,7 +113,7 @@ class PolarDistanceProjection(Preprocessing):
             f"Center: {self.object_center[0]}, {self.object_center[1]}",
             (10, 120),
             cv2.FONT_HERSHEY_SIMPLEX,
-            4, (0, 0, 255), 5
+            4.0, (0, 0, 255), 4
         )
         ax5.imshow(cv2.cvtColor(img_centered, cv2.COLOR_BGR2RGB))
         ax5.axis('off')
@@ -135,7 +135,7 @@ class PolarDistanceProjection(Preprocessing):
             f"Orientation: {self.orientation_deg:.1f}",
             (10, 120),
             cv2.FONT_HERSHEY_SIMPLEX,
-            4, (0, 0, 255), 5
+            4.0, (0, 0, 255), 4
         )
         ax6.imshow(cv2.cvtColor(img_oriented, cv2.COLOR_BGR2RGB))
         ax6.axis('off')

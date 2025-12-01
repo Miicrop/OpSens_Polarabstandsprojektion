@@ -2,13 +2,14 @@ import os
 
 from Verfahren.Polarabstandsprojektion import PolarDistanceProjection
 from Verfahren.Hauptkomponentenanalyse import PCA
+from Verfahren.CircleIntersection import CircleIntersection
 
 
-img_name = "Tasse1.jpg"
+img_name = "Ei.png"
 img_path = os.path.join("Bilder", img_name)
 
 
-variant = "PCA"
+variant = "PDP"
 
 if variant == "PDP":
     pdp = PolarDistanceProjection()
@@ -17,3 +18,7 @@ if variant == "PDP":
 elif variant == "PCA":
     pca = PCA()
     pca.run(img_path)
+    
+elif variant == "CIRC":
+    circle = CircleIntersection()
+    circle.run(img_path)
